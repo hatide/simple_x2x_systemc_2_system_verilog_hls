@@ -7,34 +7,34 @@
 /**
  * X2X_ARBITER constructor
  */
-X2X_ARBITER::X2X_ARBITER() {
+X2X_ARBITER::X2X_ARBITER(sc_module_name mName) :sc_module(mName) {
     SC_HAS_PROCESS(X2X_ARBITER);
     // R channel
     for (unsigned int index = 0; index < C_S_AXI_ID_WIDTH; index++) {
-        M_AXI_RID[index](S_AXI_RID[index]);
+        M_AXI_RID[index].bind(S_AXI_RID[index]);
     }
     for (unsigned int index = 0; index < C_S_AXI_DATA_WIDTH; index++) {
-        M_AXI_RDATA[index](S_AXI_RDATA[index]);
+        M_AXI_RDATA[index].bind(S_AXI_RDATA[index]);
     }
     for (unsigned int index = 0; index < PRAM_AXI_RRESP; index++) {
-        M_AXI_RRESP[index](S_AXI_RRESP[index]);
+        M_AXI_RRESP[index].bind(S_AXI_RRESP[index]);
     }
     for (unsigned int index = 0; index < C_S_AXI_RUSER_WIDTH; index++) {
-        M_AXI_RUSER[index](S_AXI_RUSER[index]);
+        M_AXI_RUSER[index].bind(S_AXI_RUSER[index]);
     }
-    M_AXI_RLAST(S_AXI_RLAST);
-    M_AXI_RVALID(S_AXI_RVALID);
-    S_AXI_RREADY(M_AXI_RREADY);
+    M_AXI_RLAST.bind(S_AXI_RLAST);
+    M_AXI_RVALID.bind(S_AXI_RVALID);
+    S_AXI_RREADY.bind(M_AXI_RREADY);
     // B channel
     for (unsigned int index = 0; index < C_S_AXI_ID_WIDTH; index++) {
-        M_AXI_BID[index](S_AXI_BID[index]);
+        M_AXI_BID[index].bind(S_AXI_BID[index]);
     }
     for (unsigned int index = 0; index < PRAM_AXI_RRESP; index++) {
-        M_AXI_BRESP[index](S_AXI_BRESP[index]);
+        M_AXI_BRESP[index].bind(S_AXI_BRESP[index]);
     }
-    M_AXI_BUSER(S_AXI_BUSER);
-    M_AXI_BVALID(S_AXI_BVALID);
-    S_AXI_BREADY(M_AXI_BREADY);
+    M_AXI_BUSER.bind(S_AXI_BUSER);
+    M_AXI_BVALID.bind(S_AXI_BVALID);
+    S_AXI_BREADY.bind(M_AXI_BREADY);
     // internal variable
     for (unsigned int index=0; index< PRAM_MASTER_NUM; index++)
     {
@@ -110,13 +110,16 @@ void X2X_ARBITER::AWRoundRobinMethod(){
         if (S_AXI_AWVALID[index].posedge() && (!isAwValid[index])){
             AwCounterValue[index] -= AWPriorityValid;
             isAwValid[index] = true;
-            -- AWPriorityValid;
+            if (AWPriorityValid > 0){ // last valid
+                --AWPriorityValid;
+            }
         } else if (S_AXI_AWVALID[index].negedge( ) && (isAwValid[index])){
             AwCounterValue[index] = (PRAM_MASTER_NUM-1);
             isAwValid[index] = false;
+            AWPriorityValid++;
             for (unsigned int dec = 0; dec < PRAM_MASTER_NUM; dec++) {
                 if (dec != index && isAwValid[dec]){
-                    AwCounterValue[index] =- 1;
+                    AwCounterValue[index] -= 1;
                 }
             }
         }   
@@ -130,6 +133,9 @@ void X2X_ARBITER::AWHandShackSlaveMethod( ) {
                 && isAwValid[index] && isAwSelector[index]){
                 S_AXI_AWREADY[index].write(true); // need have a internal variable to store it, 
                 isAwSelector[index] = false;
+            } else if (S_AXI_AWVALID[index].read( ) == true && isAwValid[index] 
+                && AwCounterValue[index] > 0){
+                AwCounterValue[index]--;
             }
         }
     } else {
@@ -281,11 +287,14 @@ void X2X_ARBITER::ARRoundRobinMethod( ) {
         if (S_AXI_ARVALID[index].posedge( ) && (!isArValid[index])) {
             ArCounterValue[index] -= ARPriorityValid;
             isArValid[index] = true;
-            --ARPriorityValid;
+            if (ARPriorityValid > 0) { // last valid
+                --ARPriorityValid;
+            }
         }
         else if (S_AXI_ARVALID[index].negedge( ) && (isArValid[index])) {
             ArCounterValue[index] = (PRAM_MASTER_NUM - 1);
             isArValid[index] = false;
+            ARPriorityValid++;
             for (unsigned int dec = 0; dec < PRAM_MASTER_NUM; dec++) {
                 if (dec != index && isArValid[dec]) {
                     ArCounterValue[index] = -1;
@@ -302,6 +311,10 @@ void X2X_ARBITER::ARHandShackSlaveMethod( ) {
                 && isArValid[index] && isArSelector[index]) {
                 S_AXI_ARREADY[index].write(true); // need have a internal variable to store it, 
                 isArSelector[index] = false;
+            }
+            else if (S_AXI_ARVALID[index].read( ) == true && isArValid[index]
+                && ArCounterValue[index] > 0) {
+                ArCounterValue[index]--;
             }
         }
     }
@@ -320,11 +333,14 @@ void X2X_ARBITER::WRoundRobinMethod( ) {
         if (S_AXI_WVALID[index].posedge( ) && (!isArValid[index])) {
             ArCounterValue[index] -= WPriorityValid;
             isArValid[index] = true;
-            --WPriorityValid;
+            if (WPriorityValid > 0) { // last valid
+                --WPriorityValid;
+            }
         }
         else if (S_AXI_WVALID[index].negedge( ) && (isArValid[index])) {
             ArCounterValue[index] = (PRAM_MASTER_NUM - 1);
             isArValid[index] = false;
+            WPriorityValid++;
             for (unsigned int dec = 0; dec < PRAM_MASTER_NUM; dec++) {
                 if (dec != index && isArValid[dec]) {
                     ArCounterValue[index] = -1;
@@ -337,18 +353,22 @@ void X2X_ARBITER::WRoundRobinMethod( ) {
 void X2X_ARBITER::WHandShackSlaveMethod( ) {
     if (M_AXI_WREADY.negedge( )) {
         for (unsigned int index = 0; index < PRAM_MASTER_NUM; index++) {
-            if (S_AXI_WVALID[index].read( ) == true && ArCounterValue[index] == 0
-                && isArValid[index] && isArSelector[index]) {
+            if (S_AXI_WVALID[index].read( ) == true && WCounterValue[index] == 0
+                && isWValid[index] && isWSelector[index]) {
                 S_AXI_WREADY[index].write(true); // need have a internal variable to store it, 
-                isArSelector[index] = false;
+                isWSelector[index] = false;
+            }
+            else if (S_AXI_WVALID[index].read( ) == true && isWValid[index]
+                && WCounterValue[index] > 0) {
+                WCounterValue[index]--;
             }
         }
     }
     else {
         for (unsigned int index = 0; index < PRAM_MASTER_NUM; index++) {
-            if (S_AXI_WVALID[index].read( ) == true && ArCounterValue[index] == 0
-                && isArValid[index] && isArSelector[index] != true) {
-                isArSelector[index] = true;
+            if (S_AXI_WVALID[index].read( ) == true && WCounterValue[index] == 0
+                && isWValid[index] && isWSelector[index] != true) {
+                isWSelector[index] = true;
             }
         }
     }

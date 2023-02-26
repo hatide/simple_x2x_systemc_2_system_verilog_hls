@@ -8,31 +8,33 @@
   * Constructor
   */
 template<unsigned int DATA_WIDTH >
-X2X_FIFO<DATA_WIDTH>::X2X_FIFO( )
+X2X_FIFO<DATA_WIDTH>::X2X_FIFO(sc_module_name mName):sc_module(mName)
 {
-
     Empty.initialize(true);
     Full.initialize(false);
-    for(unsigned int index = 0; index < DATA_WIDTH; index++){
-        Out[index].initialize(false);
-    }
+    //for(unsigned int index = 0; index < DATA_WIDTH; index++){
+    //    Out[index].initialize(false);
+    //}
     isPush = !X2X_PUSH_TYPE;
     isPop = !X2X_BUF_POP_TYPE;
     // Process registration
     SC_HAS_PROCESS(X2X_FIFO);
 
     SC_METHOD(PushHandlerMethod);
-    sensitive << Push.pos();
     dont_initialize( );
+    sensitive << Push.pos();
+
 
     SC_METHOD(PopHandlerMethod);
-    sensitive << Pop.pos();
     dont_initialize( );
+    sensitive << Pop.pos();
+
 
     SC_METHOD(BufferCoreHandlerMethod);
+    dont_initialize( );
     sensitive << Clock.pos( );
     sensitive << Reset.neg( );
-    dont_initialize( );
+
 }
 
 /**

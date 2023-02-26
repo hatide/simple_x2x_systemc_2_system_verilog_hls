@@ -57,7 +57,8 @@ private:
     bool GetEmpty( );
     bool GetFull( );
 public: 
-    X2X_FIFO( );
+    X2X_FIFO( ){};
+    X2X_FIFO(sc_module_name mName);
     ~X2X_FIFO( );
     // input signal
     sc_in<bool> In[DATA_WIDTH];

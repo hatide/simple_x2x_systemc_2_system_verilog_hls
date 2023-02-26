@@ -7,7 +7,7 @@
 /**
  * X2X_DECODER constructor
  */
-X2X_DECODER::X2X_DECODER() {
+X2X_DECODER::X2X_DECODER(sc_module_name mName):sc_module(mName) {
     for (unsigned int index = 0; index < PRAM_SLAVE_NUM; index++){
         isAWAddressMatch[index] = false;
         isARAddressMatch[index] = false;

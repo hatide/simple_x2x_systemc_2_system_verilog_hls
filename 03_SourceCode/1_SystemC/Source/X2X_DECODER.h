@@ -32,7 +32,7 @@ public:
     sc_dt::sc_uint<C_S_AXI_ADDR_WIDTH> start_Address[PRAM_SLAVE_NUM];
     sc_dt::sc_uint<C_S_AXI_ADDR_WIDTH> end_Address[PRAM_SLAVE_NUM];
     unsigned int masterID;
-    X2X_DECODER( );
+    X2X_DECODER(sc_module_name mName);
     ~X2X_DECODER( );
     // port declare
     //*****************************

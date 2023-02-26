@@ -36,7 +36,7 @@ private:
 
 public:
     unsigned int masterID;
-    X2X_ARBITER( );
+    X2X_ARBITER(sc_module_name mName);
     ~X2X_ARBITER( );
     // global port 
     sc_in<bool>      ACLK;                                // AXI bus clock.
