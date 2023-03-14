@@ -1,290 +1,282 @@
 /**
- * X2X_BUFFER ip
+ * x2x_buffer ip
  * Created by Tien Tran
  */
 
-#include "X2X_BUFFER.h"
+#include "x2x_buffer.h"
 
- /**
-  * Constructor
-  */
+/**
+ * Constructor
+ */
 
-X2X_BUFFER::X2X_BUFFER(sc_module_name mName):sc_module(mName)
-    , mFIFO_AW("mFIFO_AW")
-    , mFIFO_W("mFIFO_W")
-    , mFIFO_AR("mFIFO_AR")
+x2x_buffer::x2x_buffer(sc_module_name name) : sc_module(name)
+, S_AXI_AWID_aw_fifo("S_AXI_AWID_aw_fifo")
+, S_AXI_AWADDR_aw_fifo("S_AXI_AWADDR_aw_fifo")
+, S_AXI_AWLEN_aw_fifo("S_AXI_AWLEN_aw_fifo")
+, S_AXI_AWSIZE_aw_fifo("S_AXI_AWSIZE_aw_fifo")
+, S_AXI_AWBURST_aw_fifo("S_AXI_AWBURST_aw_fifo")
+, S_AXI_AWLOCK_aw_fifo("S_AXI_AWLOCK_aw_fifo")
+, S_AXI_AWCACHE_aw_fifo("S_AXI_AWCACHE_aw_fifo")
+, S_AXI_AWPROT_aw_fifo("S_AXI_AWPROT_aw_fifo")
+, S_AXI_AWREGION_aw_fifo("S_AXI_AWREGION_aw_fifo")
+, S_AXI_AWQOS_aw_fifo("S_AXI_AWQOS_aw_fifo")
+, S_AXI_AWUSER_aw_fifo("S_AXI_AWUSER_aw_fifo")
+,S_AXI_WID_w_fifo("S_AXI_WID_w_fifo")
+, S_AXI_WDATA_w_fifo("S_AXI_WDATA_w_fifo")
+, S_AXI_WSTRB_w_fifo("S_AXI_WSTRB_w_fifo")
+, S_AXI_WUSER_w_fifo("S_AXI_WUSER_w_fifo")
+,S_AXI_ARID_ar_fifo("S_AXI_ARID_ar_fifo")
+, S_AXI_ARADDR_ar_fifo("S_AXI_ARADDR_ar_fifo")
+, S_AXI_ARLEN_ar_fifo("S_AXI_ARLEN_ar_fifo")
+, S_AXI_ARSIZE_ar_fifo("S_AXI_ARSIZE_ar_fifo")
+, S_AXI_ARBURST_ar_fifo("S_AXI_ARBURST_ar_fifo")
+, S_AXI_ARCACHE_ar_fifo("S_AXI_ARCACHE_ar_fifo")
+, S_AXI_ARPROT_ar_fifo("S_AXI_ARPROT_ar_fifo")
+, S_AXI_ARREGION_ar_fifo("S_AXI_ARREGION_ar_fifo")
+, S_AXI_ARQOS_ar_fifo("S_AXI_ARQOS_ar_fifo")
+, S_AXI_ARUSER_ar_fifo("S_AXI_ARUSER_ar_fifo")
+, S_AXI_ARLOCK_ar_fifo("S_AXI_ARLOCK_ar_fifo")
 {
-    // Process registration
-    SC_HAS_PROCESS(X2X_BUFFER);
-    mFIFO_AW_DIWTH = PRAM_AW_WIDTH;
-    mFIFO_W_DIWTH = PRAM_WRITE_WIDTH;
-    mFIFO_AR_DIWTH = PRAM_AREAD_WIDTH;
+  // Process registration
+  SC_HAS_PROCESS(x2x_buffer);
+  // connect clock and reset
+  S_AXI_AWID_aw_fifo.Clock(ACLK);
+  S_AXI_AWADDR_aw_fifo.Clock(ACLK);
+  S_AXI_AWLEN_aw_fifo.Clock(ACLK);
+  S_AXI_AWSIZE_aw_fifo.Clock(ACLK);
+  S_AXI_AWBURST_aw_fifo.Clock(ACLK);
+  S_AXI_AWLOCK_aw_fifo.Clock(ACLK);
+  S_AXI_AWCACHE_aw_fifo.Clock(ACLK);
+  S_AXI_AWPROT_aw_fifo.Clock(ACLK);
+  S_AXI_AWREGION_aw_fifo.Clock(ACLK);
+  S_AXI_AWQOS_aw_fifo.Clock(ACLK);
+  S_AXI_AWUSER_aw_fifo.Clock(ACLK);
 
-    // connect clock and reset
-    mFIFO_W.Clock(ACLK);
-    mFIFO_AW.Clock(ACLK);
-    mFIFO_AR.Clock(ACLK);
-    mFIFO_W.Reset(ARESETN);
-    mFIFO_AW.Reset(ARESETN);
-    mFIFO_AR.Reset(ARESETN);
-    mFIFO_W.Pop(WPop);
-    mFIFO_AW.Pop(AwPop);
-    mFIFO_AR.Pop(ArPop);
-    AwFull(mFIFO_W.Full);
-    WFull(mFIFO_AW.Full);
-    ARFull(mFIFO_AR.Full);
-    // R channel
-    for (unsigned int index =0; index < C_S_AXI_ID_WIDTH; index++){
-        M_AXI_RID[index](S_AXI_RID[index]);
-    }
-    for (unsigned int index = 0; index < C_S_AXI_DATA_WIDTH; index++) {
-        M_AXI_RDATA[index](S_AXI_RDATA[index]);
-    }
-    for (unsigned int index = 0; index < PRAM_AXI_RRESP; index++) {
-        M_AXI_RRESP[index](S_AXI_RRESP[index]);
-    }
-    for (unsigned int index = 0; index < C_S_AXI_RUSER_WIDTH; index++) {
-        M_AXI_RUSER[index](S_AXI_RUSER[index]);
-    }
-    M_AXI_RLAST(S_AXI_RLAST);
-    M_AXI_RVALID(S_AXI_RVALID);
-    S_AXI_RREADY(M_AXI_RREADY);
-    // B channel
-    for (unsigned int index = 0; index < C_S_AXI_ID_WIDTH; index++) {
-        M_AXI_BID[index](S_AXI_BID[index]);
-    }
-    for (unsigned int index = 0; index < PRAM_AXI_RRESP; index++) {
-        M_AXI_BRESP[index](S_AXI_BRESP[index]);
-    }
-    M_AXI_BUSER(S_AXI_BUSER);
-    M_AXI_BVALID(S_AXI_BVALID);
-    S_AXI_BREADY(M_AXI_BREADY);
+  S_AXI_WID_w_fifo.Clock(ACLK);
+  S_AXI_WDATA_w_fifo.Clock(ACLK);
+  S_AXI_WSTRB_w_fifo.Clock(ACLK);
+  S_AXI_WUSER_w_fifo.Clock(ACLK);
 
-    // AW channel
-    for (unsigned int index = 0; index < mFIFO_AW_DIWTH; index++){
-        if (index < C_S_AXI_ID_WIDTH){
-            mFIFO_AW.In[index](S_AXI_AWID[index]);
-        }
-        else if (C_S_AXI_ID_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH){
-            mFIFO_AW.In[index](S_AXI_AWADDR[index-(C_S_AXI_ID_WIDTH)]);
-        } 
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN) {
-            mFIFO_AW.In[index](S_AXI_AWLEN[index-(C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE) {
-            mFIFO_AW.In[index](S_AXI_AWSIZE[index-(C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST) {
-            mFIFO_AW.In[index](S_AXI_AWBURST[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE) {
-            mFIFO_AW.In[index](S_AXI_AWCACHE[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT) {
-            mFIFO_AW.In[index](S_AXI_AWPROT[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION) {
-            mFIFO_AW.In[index](S_AXI_AWREGION[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS) {
-            mFIFO_AW.In[index](S_AXI_AWQOS[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_AWUSER_WIDTH) {    
-            mFIFO_AW.In[index](S_AXI_AWUSER[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_AWUSER_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_AWUSER_WIDTH + 1) {
-            mFIFO_AW.In[index](S_AXI_AWLOCK);
-        }
+  S_AXI_ARID_ar_fifo.Clock(ACLK);
+  S_AXI_ARADDR_ar_fifo.Clock(ACLK);
+  S_AXI_ARLEN_ar_fifo.Clock(ACLK);
+  S_AXI_ARSIZE_ar_fifo.Clock(ACLK);
+  S_AXI_ARBURST_ar_fifo.Clock(ACLK);
+  S_AXI_ARCACHE_ar_fifo.Clock(ACLK);
+  S_AXI_ARPROT_ar_fifo.Clock(ACLK);
+  S_AXI_ARREGION_ar_fifo.Clock(ACLK);
+  S_AXI_ARQOS_ar_fifo.Clock(ACLK);
+  S_AXI_ARUSER_ar_fifo.Clock(ACLK);
+  S_AXI_ARLOCK_ar_fifo.Clock(ACLK);
 
-    }
+  S_AXI_AWID_aw_fifo.Reset(ARESETN);
+  S_AXI_AWADDR_aw_fifo.Reset(ARESETN);
+  S_AXI_AWLEN_aw_fifo.Reset(ARESETN);
+  S_AXI_AWSIZE_aw_fifo.Reset(ARESETN);
+  S_AXI_AWBURST_aw_fifo.Reset(ARESETN);
+  S_AXI_AWLOCK_aw_fifo.Reset(ARESETN);
+  S_AXI_AWCACHE_aw_fifo.Reset(ARESETN);
+  S_AXI_AWPROT_aw_fifo.Reset(ARESETN);
+  S_AXI_AWREGION_aw_fifo.Reset(ARESETN);
+  S_AXI_AWQOS_aw_fifo.Reset(ARESETN);
+  S_AXI_AWUSER_aw_fifo.Reset(ARESETN);
 
-    for (unsigned int index = 0; index < mFIFO_AW_DIWTH; index++) {
-        if (index < C_S_AXI_ID_WIDTH) {
-            mFIFO_AW.Out[index](M_AXI_AWID[index]);
-        }
-        else if (C_S_AXI_ID_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH) {
-            mFIFO_AW.Out[index](M_AXI_AWADDR[index- C_S_AXI_ID_WIDTH]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN) {
-            mFIFO_AW.Out[index](M_AXI_AWLEN[index-(C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE) {
-            mFIFO_AW.Out[index](M_AXI_AWSIZE[index-(C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST) {
-            mFIFO_AW.Out[index](M_AXI_AWBURST[index-(C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE) {
-            mFIFO_AW.Out[index](M_AXI_AWCACHE[index-(C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT) {
-            mFIFO_AW.Out[index](M_AXI_AWPROT[index-(C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION) {
-            mFIFO_AW.Out[index](M_AXI_AWREGION[index-(C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS) {
-            mFIFO_AW.Out[index](M_AXI_AWQOS[index-(C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_AWUSER_WIDTH) {
-            mFIFO_AW.Out[index](M_AXI_AWUSER[index-(C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_AWUSER_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_AWUSER_WIDTH + 1) {
-            mFIFO_AW.Out[index](M_AXI_AWLOCK);
-        }
-    }
-    // W channel
-    for (unsigned int index = 0; index < mFIFO_AW_DIWTH; index++) {
-        if (index <  C_S_AXI_ID_WIDTH){
-            mFIFO_W.In[index](S_AXI_WID[index]);
-        }
-        else if (C_S_AXI_ID_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH){
-            mFIFO_W.In[index](S_AXI_WDATA[index-(C_S_AXI_ID_WIDTH)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8)) {
-            mFIFO_W.In[index](S_AXI_WSTRB[index - (C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8) <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8) + C_S_AXI_WUSER_WIDTH) {
-            mFIFO_W.In[index](S_AXI_WUSER[index - (C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8))]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8) + C_S_AXI_WUSER_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8) + C_S_AXI_WUSER_WIDTH + 1) {
-            mFIFO_W.In[index](S_AXI_WLAST);
-        }
-    }
+  S_AXI_WID_w_fifo.Reset(ARESETN);
+  S_AXI_WDATA_w_fifo.Reset(ARESETN);
+  S_AXI_WSTRB_w_fifo.Reset(ARESETN);
+  S_AXI_WUSER_w_fifo.Reset(ARESETN);
 
-    for (unsigned int index = 0; index < mFIFO_AW_DIWTH; index++) {
-        if (index < C_S_AXI_ID_WIDTH) {
-            mFIFO_W.Out[index](M_AXI_WID[index]);
-        }
-        else if (C_S_AXI_ID_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH) {
-            mFIFO_W.Out[index](M_AXI_WDATA[index - (C_S_AXI_ID_WIDTH)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8)) {
-            mFIFO_W.Out[index](M_AXI_WSTRB[index - (C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8) <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8) + C_S_AXI_WUSER_WIDTH) {
-            mFIFO_W.Out[index](M_AXI_WUSER[index - (C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8))]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8) + C_S_AXI_WUSER_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_DATA_WIDTH + (C_S_AXI_DATA_WIDTH / 8) + C_S_AXI_WUSER_WIDTH + 1) {
-            mFIFO_W.Out[index](M_AXI_WLAST);
-        }
-    }
+  S_AXI_ARID_ar_fifo.Reset(ARESETN);
+  S_AXI_ARADDR_ar_fifo.Reset(ARESETN);
+  S_AXI_ARLEN_ar_fifo.Reset(ARESETN);
+  S_AXI_ARSIZE_ar_fifo.Reset(ARESETN);
+  S_AXI_ARBURST_ar_fifo.Reset(ARESETN);
+  S_AXI_ARCACHE_ar_fifo.Reset(ARESETN);
+  S_AXI_ARPROT_ar_fifo.Reset(ARESETN);
+  S_AXI_ARREGION_ar_fifo.Reset(ARESETN);
+  S_AXI_ARQOS_ar_fifo.Reset(ARESETN);
+  S_AXI_ARUSER_ar_fifo.Reset(ARESETN);
+  S_AXI_ARLOCK_ar_fifo.Reset(ARESETN);
 
-    // AR
-    for (unsigned int index = 0; index < mFIFO_AW_DIWTH; index++) {
-        if (index < C_S_AXI_ID_WIDTH) {
-            mFIFO_AR.In[index](S_AXI_ARID[index]);
-        }
-        else if (C_S_AXI_ID_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH) {
-            mFIFO_AR.In[index](S_AXI_ARADDR[index - (C_S_AXI_ID_WIDTH)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN) {
-            mFIFO_AR.In[index](S_AXI_ARLEN[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE) {
-            mFIFO_AR.In[index](S_AXI_ARSIZE[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST) {
-            mFIFO_AR.In[index](S_AXI_ARBURST[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE) {
-            mFIFO_AR.In[index](S_AXI_ARCACHE[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT) {
-            mFIFO_AR.In[index](S_AXI_ARPROT[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION) {
-            mFIFO_AR.In[index](S_AXI_ARREGION[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS) {
-            mFIFO_AR.In[index](S_AXI_ARQOS[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_ARUSER_WIDTH) {
-            mFIFO_AR.In[index](S_AXI_ARUSER[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_ARUSER_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_ARUSER_WIDTH + 1) {
-            mFIFO_AR.In[index](S_AXI_ARLOCK);
-        }
-    }
-    for (unsigned int index = 0; index < mFIFO_AW_DIWTH; index++) {
-        if (index < C_S_AXI_ID_WIDTH) {
-            mFIFO_AR.Out[index](M_AXI_ARID[index]);
-        }
-        else if (C_S_AXI_ID_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH) {
-            mFIFO_AR.Out[index](M_AXI_ARADDR[index - (C_S_AXI_ID_WIDTH)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN) {
-            mFIFO_AR.Out[index](M_AXI_ARLEN[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE) {
-            mFIFO_AR.Out[index](M_AXI_ARSIZE[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST) {
-            mFIFO_AR.Out[index](M_AXI_ARBURST[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE) {
-            mFIFO_AR.Out[index](M_AXI_ARCACHE[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT) {
-            mFIFO_AR.Out[index](M_AXI_ARPROT[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION) {
-            mFIFO_AR.Out[index](M_AXI_ARREGION[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS) {
-            mFIFO_AR.Out[index](M_AXI_ARQOS[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_ARUSER_WIDTH) {
-            mFIFO_AR.Out[index](M_AXI_ARUSER[index - (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS)]);
-        }
-        else if (C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_ARUSER_WIDTH <= index && index < C_S_AXI_ID_WIDTH + C_S_AXI_ADDR_WIDTH + PRAM_AXI_AxLEN + PRAM_AXI_AxSIZE + PRAM_AXI_AxBURST + PRAM_AXI_AxCACHE + PRAM_AXI_AxPROT + PRAM_AXI_AxREGION + PRAM_AXI_AxQOS + C_S_AXI_ARUSER_WIDTH + 1) {
-            mFIFO_AR.Out[index](M_AXI_ARLOCK);
-        }
-    }
+  S_AXI_WID_w_fifo.Pop(WPop);
+  S_AXI_WDATA_w_fifo.Pop(WPop);
+  S_AXI_WSTRB_w_fifo.Pop(WPop);
+  S_AXI_WUSER_w_fifo.Pop(WPop);
 
-    SC_METHOD(mFIFOAWPush_Method)
-    dont_initialize( );
-    sensitive << S_AXI_AWVALID;
-    sensitive << mFIFO_AW.Full;
+  S_AXI_AWID_aw_fifo.Pop(AwPop);
+  S_AXI_AWADDR_aw_fifo.Pop(AwPop);
+  S_AXI_AWLEN_aw_fifo.Pop(AwPop);
+  S_AXI_AWSIZE_aw_fifo.Pop(AwPop);
+  S_AXI_AWBURST_aw_fifo.Pop(AwPop);
+  S_AXI_AWLOCK_aw_fifo.Pop(AwPop);
+  S_AXI_AWCACHE_aw_fifo.Pop(AwPop);
+  S_AXI_AWPROT_aw_fifo.Pop(AwPop);
+  S_AXI_AWREGION_aw_fifo.Pop(AwPop);
+  S_AXI_AWQOS_aw_fifo.Pop(AwPop);
+  S_AXI_AWUSER_aw_fifo.Pop(AwPop);
 
-    SC_METHOD(mFIFOWPush_Method)
-    dont_initialize( );
-    sensitive << S_AXI_WVALID;
-    sensitive << mFIFO_W.Full;
+  S_AXI_ARID_ar_fifo.Pop(ArPop);
+  S_AXI_ARADDR_ar_fifo.Pop(ArPop);
+  S_AXI_ARLEN_ar_fifo.Pop(ArPop);
+  S_AXI_ARSIZE_ar_fifo.Pop(ArPop);
+  S_AXI_ARBURST_ar_fifo.Pop(ArPop);
+  S_AXI_ARCACHE_ar_fifo.Pop(ArPop);
+  S_AXI_ARPROT_ar_fifo.Pop(ArPop);
+  S_AXI_ARREGION_ar_fifo.Pop(ArPop);
+  S_AXI_ARQOS_ar_fifo.Pop(ArPop);
+  S_AXI_ARUSER_ar_fifo.Pop(ArPop);
+  S_AXI_ARLOCK_ar_fifo.Pop(ArPop);
 
-    SC_METHOD(mFIFOARPush_Method)
-    dont_initialize( );
-    sensitive << S_AXI_ARVALID;
-    sensitive << mFIFO_AR.Full;
+  AwFull(S_AXI_WDATA_w_fifo.Full);
+  WFull(S_AXI_AWADDR_aw_fifo.Full);
+  ARFull(S_AXI_ARADDR_ar_fifo.Full);
+  // R channel
+  M_AXI_RID(S_AXI_RID);
+  M_AXI_RDATA(S_AXI_RDATA);
+  M_AXI_RRESP(S_AXI_RRESP);
+  M_AXI_RUSER(S_AXI_RUSER);
+  M_AXI_RLAST(S_AXI_RLAST);
+  M_AXI_RVALID(S_AXI_RVALID);
+  S_AXI_RREADY(M_AXI_RREADY);
+  // B channel
+  M_AXI_BID(S_AXI_BID);
+  M_AXI_BRESP(S_AXI_BRESP);
+  M_AXI_BUSER(S_AXI_BUSER);
+  M_AXI_BVALID(S_AXI_BVALID);
+  S_AXI_BREADY(M_AXI_BREADY);
 
-}   
+  S_AXI_WID_w_fifo.In(S_AXI_WID);
+  S_AXI_WDATA_w_fifo.In(S_AXI_WDATA);
+  S_AXI_WSTRB_w_fifo.In(S_AXI_WSTRB);
+  S_AXI_WUSER_w_fifo.In(S_AXI_WUSER);
+
+  S_AXI_AWID_aw_fifo.In(S_AXI_AWID);
+  S_AXI_AWADDR_aw_fifo.In(S_AXI_AWADDR);
+  S_AXI_AWLEN_aw_fifo.In(S_AXI_AWLEN);
+  S_AXI_AWSIZE_aw_fifo.In(S_AXI_AWSIZE);
+  S_AXI_AWBURST_aw_fifo.In(S_AXI_AWBURST);
+  S_AXI_AWLOCK_aw_fifo.In(S_AXI_AWLOCK);
+  S_AXI_AWCACHE_aw_fifo.In(S_AXI_AWCACHE);
+  S_AXI_AWPROT_aw_fifo.In(S_AXI_AWPROT);
+  S_AXI_AWREGION_aw_fifo.In(S_AXI_AWREGION);
+  S_AXI_AWQOS_aw_fifo.In(S_AXI_AWQOS);
+  S_AXI_AWUSER_aw_fifo.In(S_AXI_AWUSER);
+
+  S_AXI_ARID_ar_fifo.In(S_AXI_ARID);
+  S_AXI_ARADDR_ar_fifo.In(S_AXI_ARADDR);
+  S_AXI_ARLEN_ar_fifo.In(S_AXI_ARLEN);
+  S_AXI_ARSIZE_ar_fifo.In(S_AXI_ARSIZE);
+  S_AXI_ARBURST_ar_fifo.In(S_AXI_ARBURST);
+  S_AXI_ARCACHE_ar_fifo.In(S_AXI_ARCACHE);
+  S_AXI_ARPROT_ar_fifo.In(S_AXI_ARPROT);
+  S_AXI_ARREGION_ar_fifo.In(S_AXI_ARREGION);
+  S_AXI_ARQOS_ar_fifo.In(S_AXI_ARQOS);
+  S_AXI_ARUSER_ar_fifo.In(S_AXI_ARUSER);
+  S_AXI_ARLOCK_ar_fifo.In(S_AXI_ARLOCK);
+
+  S_AXI_WID_w_fifo.Out(M_AXI_WID);
+  S_AXI_WDATA_w_fifo.Out(M_AXI_WDATA);
+  S_AXI_WSTRB_w_fifo.Out(M_AXI_WSTRB);
+  S_AXI_WUSER_w_fifo.Out(M_AXI_WUSER);
+
+  S_AXI_AWID_aw_fifo.Out(M_AXI_AWID);
+  S_AXI_AWADDR_aw_fifo.Out(M_AXI_AWADDR);
+  S_AXI_AWLEN_aw_fifo.Out(M_AXI_AWLEN);
+  S_AXI_AWSIZE_aw_fifo.Out(M_AXI_AWSIZE);
+  S_AXI_AWBURST_aw_fifo.Out(M_AXI_AWBURST);
+  S_AXI_AWLOCK_aw_fifo.Out(M_AXI_AWLOCK);
+  S_AXI_AWCACHE_aw_fifo.Out(M_AXI_AWCACHE);
+  S_AXI_AWPROT_aw_fifo.Out(M_AXI_AWPROT);
+  S_AXI_AWREGION_aw_fifo.Out(M_AXI_AWREGION);
+  S_AXI_AWQOS_aw_fifo.Out(M_AXI_AWQOS);
+  S_AXI_AWUSER_aw_fifo.Out(M_AXI_AWUSER);
+
+  S_AXI_ARID_ar_fifo.Out(M_AXI_ARID);
+  S_AXI_ARADDR_ar_fifo.Out(M_AXI_ARADDR);
+  S_AXI_ARLEN_ar_fifo.Out(M_AXI_ARLEN);
+  S_AXI_ARSIZE_ar_fifo.Out(M_AXI_ARSIZE);
+  S_AXI_ARBURST_ar_fifo.Out(M_AXI_ARBURST);
+  S_AXI_ARCACHE_ar_fifo.Out(M_AXI_ARCACHE);
+  S_AXI_ARPROT_ar_fifo.Out(M_AXI_ARPROT);
+  S_AXI_ARREGION_ar_fifo.Out(M_AXI_ARREGION);
+  S_AXI_ARQOS_ar_fifo.Out(M_AXI_ARQOS);
+  S_AXI_ARUSER_ar_fifo.Out(M_AXI_ARUSER);
+  S_AXI_ARLOCK_ar_fifo.Out(M_AXI_ARLOCK);
+
+  SC_METHOD(handle_aw_push_method)
+  dont_initialize();
+  sensitive << S_AXI_AWVALID;
+  sensitive << S_AXI_AWADDR_aw_fifo.Full;
+
+  SC_METHOD(handle_w_push_method)
+  dont_initialize();
+  sensitive << S_AXI_WVALID;
+  sensitive << S_AXI_WDATA_w_fifo.Full;
+
+  SC_METHOD(handle_ar_push_method)
+  dont_initialize();
+  sensitive << S_AXI_ARVALID;
+  sensitive << S_AXI_ARADDR_ar_fifo.Full;
+}
 
 /**
  * Desctructor
  */
-X2X_BUFFER::~X2X_BUFFER() {
+x2x_buffer::~x2x_buffer()
+{
 }
 /**
- * mFIFOAWPush_Method
+ * handle_aw_push_method
  */
-void X2X_BUFFER::mFIFOAWPush_Method( ){
-    mFIFO_AW_Push_Signal.write((!mFIFO_AW.Full.read()) & S_AXI_AWVALID.read());
-    mFIFO_AW.Push(mFIFO_AW_Push_Signal);
-    S_AXI_AWREADY.write(!mFIFO_AW.Full.read());
+void x2x_buffer::handle_aw_push_method()
+{
+  aw_fifo_push_signal.write((!S_AXI_AWADDR_aw_fifo.Full.read()) & S_AXI_AWVALID.read());
+
+  S_AXI_AWID_aw_fifo.Push(aw_fifo_push_signal);
+  S_AXI_AWADDR_aw_fifo.Push(aw_fifo_push_signal);
+  S_AXI_AWLEN_aw_fifo.Push(aw_fifo_push_signal);
+  S_AXI_AWSIZE_aw_fifo.Push(aw_fifo_push_signal);
+  S_AXI_AWBURST_aw_fifo.Push(aw_fifo_push_signal);
+  S_AXI_AWLOCK_aw_fifo.Push(aw_fifo_push_signal);
+  S_AXI_AWCACHE_aw_fifo.Push(aw_fifo_push_signal);
+  S_AXI_AWPROT_aw_fifo.Push(aw_fifo_push_signal);
+  S_AXI_AWREGION_aw_fifo.Push(aw_fifo_push_signal);
+  S_AXI_AWQOS_aw_fifo.Push(aw_fifo_push_signal);
+  S_AXI_AWUSER_aw_fifo.Push(aw_fifo_push_signal);
+
+  S_AXI_AWREADY.write(!S_AXI_AWADDR_aw_fifo.Full.read());
 }
 /**
- * mFIFOWPush_Method
+ * handle_w_push_method
  */
-void X2X_BUFFER::mFIFOWPush_Method( ){
-    mFIFO_W_Push_Signal.write((!mFIFO_W.Full.read( )) & S_AXI_WVALID.read( ));
-    mFIFO_W.Push(mFIFO_W_Push_Signal);
-    S_AXI_WREADY.write(!mFIFO_W.Full.read( ));
+void x2x_buffer::handle_w_push_method()
+{
+  w_fifo_push_signal.write((!S_AXI_WDATA_w_fifo.Full.read()) & S_AXI_WVALID.read());
+  S_AXI_WID_w_fifo.Push(w_fifo_push_signal);
+  S_AXI_WDATA_w_fifo.Push(w_fifo_push_signal);
+  S_AXI_WSTRB_w_fifo.Push(w_fifo_push_signal);
+  S_AXI_WUSER_w_fifo.Push(w_fifo_push_signal);
+
+  S_AXI_WREADY.write(!S_AXI_WDATA_w_fifo.Full.read());
 }
 /**
- * mFIFOARPush_Method
+ * handle_ar_push_method
  */
-void X2X_BUFFER::mFIFOARPush_Method( ){
-    mFIFO_AR_Push_Signal.write((!mFIFO_AR.Full.read( )) & S_AXI_ARVALID.read( ));
-    mFIFO_AR.Push(mFIFO_AR_Push_Signal);
-    S_AXI_ARREADY.write(!mFIFO_AR.Full.read( ));
+void x2x_buffer::handle_ar_push_method()
+{
+  ar_fifo_push_signal.write((!S_AXI_ARADDR_ar_fifo.Full.read()) & S_AXI_ARVALID.read());
+
+  S_AXI_ARID_ar_fifo.Push(ar_fifo_push_signal);
+  S_AXI_ARADDR_ar_fifo.Push(ar_fifo_push_signal);
+  S_AXI_ARLEN_ar_fifo.Push(ar_fifo_push_signal);
+  S_AXI_ARSIZE_ar_fifo.Push(ar_fifo_push_signal);
+  S_AXI_ARBURST_ar_fifo.Push(ar_fifo_push_signal);
+  S_AXI_ARCACHE_ar_fifo.Push(ar_fifo_push_signal);
+  S_AXI_ARPROT_ar_fifo.Push(ar_fifo_push_signal);
+  S_AXI_ARREGION_ar_fifo.Push(ar_fifo_push_signal);
+  S_AXI_ARQOS_ar_fifo.Push(ar_fifo_push_signal);
+  S_AXI_ARUSER_ar_fifo.Push(ar_fifo_push_signal);
+  S_AXI_ARLOCK_ar_fifo.Push(ar_fifo_push_signal);
+
+  S_AXI_ARREADY.write(!S_AXI_ARADDR_ar_fifo.Full.read());
 }
