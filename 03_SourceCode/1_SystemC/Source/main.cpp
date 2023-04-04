@@ -30,7 +30,7 @@ sc_signal<sc_uint<C_S_AXI_ADDR_WIDTH>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_AWADDR
 sc_signal<sc_uint<PRAM_AXI_AxLEN>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_AWLEN[PRAM_MASTER_NUM];        // AXI address Write burst length.
 sc_signal<sc_uint<PRAM_AXI_AxSIZE>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_AWSIZE[PRAM_MASTER_NUM];      // AXI address Write burst size.
 sc_signal<sc_uint<PRAM_AXI_AxBURST>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_AWBURST[PRAM_MASTER_NUM];    // AXI address Write burst type.
-sc_signal<bool, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_AWLOCK[PRAM_MASTER_NUM];                    // AXI Write address lock signal.
+sc_signal<sc_uint<1>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_AWLOCK[PRAM_MASTER_NUM];                    // AXI Write address lock signal.
 sc_signal<sc_uint<PRAM_AXI_AxCACHE>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_AWCACHE[PRAM_MASTER_NUM];    // AXI Write address cache control signal.
 sc_signal<sc_uint<PRAM_AXI_AxPROT>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_AWPROT[PRAM_MASTER_NUM];      // AXI Write address protection signal.
 sc_signal<sc_uint<PRAM_AXI_AxREGION>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_AWREGION[PRAM_MASTER_NUM];  // Channel address region index
@@ -63,7 +63,7 @@ sc_signal<sc_uint<PRAM_AXI_AxPROT>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_ARPROT[PR
 sc_signal<sc_uint<PRAM_AXI_AxREGION>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_ARREGION[PRAM_MASTER_NUM];  // Channel address region index.
 sc_signal<sc_uint<PRAM_AXI_AxQOS>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_ARQOS[PRAM_MASTER_NUM];        // Channel Quality of Service.
 sc_signal<sc_uint<C_S_AXI_ARUSER_WIDTH>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_ARUSER[PRAM_MASTER_NUM]; // User-defined AR Channel signals.
-sc_signal<bool, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_ARLOCK[PRAM_MASTER_NUM];                    // AXI Read address lock signal.
+sc_signal<sc_uint<1>, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_ARLOCK[PRAM_MASTER_NUM];                    // AXI Read address lock signal.
 sc_signal<bool, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_ARVALID[PRAM_MASTER_NUM];                   // AXI Read address valid.
 sc_signal<bool, SC_UNCHECKED_WRITERS> SIGNAL_S_AXI_ARREADY[PRAM_MASTER_NUM];                   // AXI Read address ready.
 // AXI Read Data Channel Signals (R)
@@ -85,7 +85,7 @@ sc_signal<sc_uint<C_S_AXI_ADDR_WIDTH>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_AWADDR
 sc_signal<sc_uint<PRAM_AXI_AxLEN>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_AWLEN[PRAM_SLAVE_NUM];        // AXI address Write burst length.
 sc_signal<sc_uint<PRAM_AXI_AxSIZE>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_AWSIZE[PRAM_SLAVE_NUM];      // AXI address Write burst size.
 sc_signal<sc_uint<PRAM_AXI_AxBURST>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_AWBURST[PRAM_SLAVE_NUM];    // AXI address Write burst type.
-sc_signal<bool, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_AWLOCK[PRAM_SLAVE_NUM];                    // AXI Write address lock signal.
+sc_signal<sc_uint<1>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_AWLOCK[PRAM_SLAVE_NUM];                    // AXI Write address lock signal.
 sc_signal<sc_uint<PRAM_AXI_AxCACHE>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_AWCACHE[PRAM_SLAVE_NUM];    // AXI Write address cache control signal.
 sc_signal<sc_uint<PRAM_AXI_AxPROT>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_AWPROT[PRAM_SLAVE_NUM];      // AXI Write address protection signal.
 sc_signal<sc_uint<PRAM_AXI_AxREGION>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_AWREGION[PRAM_SLAVE_NUM];  // Channel address region index
@@ -114,7 +114,7 @@ sc_signal<sc_uint<C_S_AXI_ADDR_WIDTH>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_ARADDR
 sc_signal<sc_uint<PRAM_AXI_AxLEN>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_ARLEN[PRAM_SLAVE_NUM];        // AXI address Read burst length.
 sc_signal<sc_uint<PRAM_AXI_AxSIZE>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_ARSIZE[PRAM_SLAVE_NUM];      // AXI address Read burst size.
 sc_signal<sc_uint<PRAM_AXI_AxBURST>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_ARBURST[PRAM_SLAVE_NUM];    // AXI address Read burst type.
-sc_signal<bool, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_ARLOCK[PRAM_SLAVE_NUM];                    // AXI Read address lock signal.
+sc_signal<sc_uint<1>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_ARLOCK[PRAM_SLAVE_NUM];                    // AXI Read address lock signal.
 sc_signal<sc_uint<PRAM_AXI_AxCACHE>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_ARCACHE[PRAM_SLAVE_NUM];    // AXI Read address cache control signal.
 sc_signal<sc_uint<PRAM_AXI_AxPROT>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_ARPROT[PRAM_SLAVE_NUM];      // AXI Read address protection signal.
 sc_signal<sc_uint<PRAM_AXI_AxREGION>, SC_UNCHECKED_WRITERS> SIGNAL_M_AXI_ARREGION[PRAM_SLAVE_NUM];  // Channel address region index.

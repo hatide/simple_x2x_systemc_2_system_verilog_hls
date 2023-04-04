@@ -1,0 +1,29 @@
+{
+  "env": {
+    "SYSTEMC_PATH": "/usr/local/systemc-2.3.3/"
+  },
+  "configurations": [
+    {
+      "name": "linux-gcc-x64",
+      "browse": {
+        "path": [
+          "${workspaceFolder}",
+          "${env:SYSTEMC_PATH}/src",
+          "${env:SYSTEMC_PATH}/include"
+        ],
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/",
+        "C:\\systemc-2.3.3\\src\\*"
+      ],
+      "defines": [],
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerPath": "/usr/bin/gcc"
+    }
+  ],
+  "version": 4
+}

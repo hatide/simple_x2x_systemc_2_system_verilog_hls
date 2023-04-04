@@ -1,15 +1,15 @@
 /**
- * x2x_buffer IP
+ * X2x_buffer IP
  * Created by Tien Tran
  */
 
 #include "x2x_fifo.h"
 #include "AXI_Interconnection.h"
 
-#ifndef _x2x_buffer_H
-#define _x2x_buffer_H
+#ifndef _X2x_buffer_H
+#define _X2x_buffer_H
 
-class x2x_buffer : public sc_module
+class X2x_buffer : public sc_module
 {
 private:
     x2x_fifo<C_S_AXI_ID_WIDTH> S_AXI_AWID_aw_fifo;       // AXI address Write ID.
@@ -53,9 +53,9 @@ private:
     sc_signal<bool, SC_UNCHECKED_WRITERS> w_fifo_push_signal;
 
 public:
-    x2x_buffer(sc_module_name name);
-    x2x_buffer(){};
-    ~x2x_buffer();
+    X2x_buffer(sc_module_name name);
+    X2x_buffer(){};
+    ~X2x_buffer();
     // global port
     sc_in<bool> ACLK;    // AXI bus clock.
     sc_in<bool> ARESETN; // AXI active-Low reset
@@ -74,7 +74,7 @@ public:
     sc_in<sc_uint<PRAM_AXI_AxLEN>> S_AXI_AWLEN;        // AXI address Write burst length.
     sc_in<sc_uint<PRAM_AXI_AxSIZE>> S_AXI_AWSIZE;      // AXI address Write burst size.
     sc_in<sc_uint<PRAM_AXI_AxBURST>> S_AXI_AWBURST;    // AXI address Write burst type.
-    sc_in<bool> S_AXI_AWLOCK;                    // AXI Write address lock signal.
+    sc_in<sc_uint<1>> S_AXI_AWLOCK;                    // AXI Write address lock signal.
     sc_in<sc_uint<PRAM_AXI_AxCACHE>> S_AXI_AWCACHE;    // AXI Write address cache control signal.
     sc_in<sc_uint<PRAM_AXI_AxPROT>> S_AXI_AWPROT;      // AXI Write address protection signal.
     sc_in<sc_uint<PRAM_AXI_AxREGION>> S_AXI_AWREGION;  // Channel address region index
@@ -107,7 +107,7 @@ public:
     sc_in<sc_uint<PRAM_AXI_AxREGION>> S_AXI_ARREGION;  // Channel address region index.
     sc_in<sc_uint<PRAM_AXI_AxQOS>> S_AXI_ARQOS;        // Channel Quality of Service.
     sc_in<sc_uint<C_S_AXI_ARUSER_WIDTH>> S_AXI_ARUSER; // User-defined AR Channel signals.
-    sc_in<bool> S_AXI_ARLOCK;                    // AXI Read address lock signal.
+    sc_in<sc_uint<1>> S_AXI_ARLOCK;                    // AXI Read address lock signal.
     sc_in<bool> S_AXI_ARVALID;                   // AXI Read address valid.
     sc_out<bool> S_AXI_ARREADY;                  // AXI Read address ready.
     // AXI Read Data Channel Signals (R)
@@ -128,7 +128,7 @@ public:
     sc_out<sc_uint<PRAM_AXI_AxLEN>> M_AXI_AWLEN;        // AXI address Write burst length.
     sc_out<sc_uint<PRAM_AXI_AxSIZE>> M_AXI_AWSIZE;      // AXI address Write burst size.
     sc_out<sc_uint<PRAM_AXI_AxBURST>> M_AXI_AWBURST;    // AXI address Write burst type.
-    sc_out<bool> M_AXI_AWLOCK;                    // AXI Write address lock signal.
+    sc_out<sc_uint<1>> M_AXI_AWLOCK;                    // AXI Write address lock signal.
     sc_out<sc_uint<PRAM_AXI_AxCACHE>> M_AXI_AWCACHE;    // AXI Write address cache control signal.
     sc_out<sc_uint<PRAM_AXI_AxPROT>> M_AXI_AWPROT;      // AXI Write address protection signal.
     sc_out<sc_uint<PRAM_AXI_AxREGION>> M_AXI_AWREGION;  // Channel address region index
@@ -156,7 +156,7 @@ public:
     sc_out<sc_uint<PRAM_AXI_AxLEN>> M_AXI_ARLEN;        // AXI address Read burst length.
     sc_out<sc_uint<PRAM_AXI_AxSIZE>> M_AXI_ARSIZE;      // AXI address Read burst size.
     sc_out<sc_uint<PRAM_AXI_AxBURST>> M_AXI_ARBURST;    // AXI address Read burst type.
-    sc_out<bool> M_AXI_ARLOCK;                    // AXI Read address lock signal.
+    sc_out<sc_uint<1>> M_AXI_ARLOCK;                    // AXI Read address lock signal.
     sc_out<sc_uint<PRAM_AXI_AxCACHE>> M_AXI_ARCACHE;    // AXI Read address cache control signal.
     sc_out<sc_uint<PRAM_AXI_AxPROT>> M_AXI_ARPROT;      // AXI Read address protection signal.
     sc_out<sc_uint<PRAM_AXI_AxREGION>> M_AXI_ARREGION;  // Channel address region index.
@@ -174,4 +174,4 @@ public:
     sc_out<bool> M_AXI_RREADY;                 // AXI Read ready.
 };
 
-#endif //_x2x_buffer_H
+#endif //_X2x_buffer_H

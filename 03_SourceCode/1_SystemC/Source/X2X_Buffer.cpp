@@ -1,15 +1,15 @@
 /**
- * x2x_buffer ip
+ * X2x_buffer ip
  * Created by Tien Tran
  */
 
-#include "x2x_buffer.h"
+#include "X2x_buffer.h"
 
 /**
  * Constructor
  */
 
-x2x_buffer::x2x_buffer(sc_module_name name) : sc_module(name)
+X2x_buffer::X2x_buffer(sc_module_name name) : sc_module(name)
 , S_AXI_AWID_aw_fifo("S_AXI_AWID_aw_fifo")
 , S_AXI_AWADDR_aw_fifo("S_AXI_AWADDR_aw_fifo")
 , S_AXI_AWLEN_aw_fifo("S_AXI_AWLEN_aw_fifo")
@@ -38,7 +38,7 @@ x2x_buffer::x2x_buffer(sc_module_name name) : sc_module(name)
 , S_AXI_ARLOCK_ar_fifo("S_AXI_ARLOCK_ar_fifo")
 {
   // Process registration
-  SC_HAS_PROCESS(x2x_buffer);
+  SC_HAS_PROCESS(X2x_buffer);
   // connect clock and reset
   S_AXI_AWID_aw_fifo.Clock(ACLK);
   S_AXI_AWADDR_aw_fifo.Clock(ACLK);
@@ -222,13 +222,13 @@ x2x_buffer::x2x_buffer(sc_module_name name) : sc_module(name)
 /**
  * Desctructor
  */
-x2x_buffer::~x2x_buffer()
+X2x_buffer::~X2x_buffer()
 {
 }
 /**
  * handle_aw_push_method
  */
-void x2x_buffer::handle_aw_push_method()
+void X2x_buffer::handle_aw_push_method()
 {
   aw_fifo_push_signal.write((!S_AXI_AWADDR_aw_fifo.Full.read()) & S_AXI_AWVALID.read());
 
@@ -249,7 +249,7 @@ void x2x_buffer::handle_aw_push_method()
 /**
  * handle_w_push_method
  */
-void x2x_buffer::handle_w_push_method()
+void X2x_buffer::handle_w_push_method()
 {
   w_fifo_push_signal.write((!S_AXI_WDATA_w_fifo.Full.read()) & S_AXI_WVALID.read());
   S_AXI_WID_w_fifo.Push(w_fifo_push_signal);
@@ -262,7 +262,7 @@ void x2x_buffer::handle_w_push_method()
 /**
  * handle_ar_push_method
  */
-void x2x_buffer::handle_ar_push_method()
+void X2x_buffer::handle_ar_push_method()
 {
   ar_fifo_push_signal.write((!S_AXI_ARADDR_ar_fifo.Full.read()) & S_AXI_ARVALID.read());
 

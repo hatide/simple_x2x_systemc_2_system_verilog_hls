@@ -3,10 +3,10 @@
  */
 
 #include "AXI_Interconnection.h"
-#ifndef _x2x_decoder_H
-#define _x2x_decoder_H
+#ifndef _X2x_decoder_H
+#define _X2x_decoder_H
 
-class x2x_decoder: public sc_module {
+class X2x_decoder: public sc_module {
 private: 
     void InsertAWMasterIDMethod();
     void InsertWMasterIDMethod();
@@ -32,8 +32,8 @@ public:
     sc_dt::sc_uint<C_S_AXI_ADDR_WIDTH> start_Address[PRAM_SLAVE_NUM];
     sc_dt::sc_uint<C_S_AXI_ADDR_WIDTH> end_Address[PRAM_SLAVE_NUM];
     unsigned int masterID;
-    x2x_decoder(sc_module_name name);
-    ~x2x_decoder( );
+    X2x_decoder(sc_module_name name);
+    ~X2x_decoder( );
     // port declare
     //*****************************
     //********Slave side signal***
@@ -44,7 +44,7 @@ public:
     sc_in<sc_uint<PRAM_AXI_AxLEN>>     S_AXI_AWLEN;        // AXI address Write burst length.
     sc_in<sc_uint<PRAM_AXI_AxSIZE>>     S_AXI_AWSIZE;      // AXI address Write burst size.
     sc_in<sc_uint<PRAM_AXI_AxBURST>>     S_AXI_AWBURST;    // AXI address Write burst type.
-    sc_in<bool>     S_AXI_AWLOCK;                       // AXI Write address lock signal.
+    sc_in<sc_uint<1>>     S_AXI_AWLOCK;                       // AXI Write address lock signal.
     sc_in<sc_uint<PRAM_AXI_AxCACHE>>     S_AXI_AWCACHE;    // AXI Write address cache control signal.
     sc_in<sc_uint<PRAM_AXI_AxPROT>>     S_AXI_AWPROT;      // AXI Write address protection signal.
     sc_in<sc_uint<PRAM_AXI_AxREGION>>     S_AXI_AWREGION;  // Channel address region index
@@ -72,7 +72,7 @@ public:
     sc_in<sc_uint<PRAM_AXI_AxLEN>>     S_AXI_ARLEN;        // AXI address Read burst length.
     sc_in<sc_uint<PRAM_AXI_AxSIZE>>     S_AXI_ARSIZE;      // AXI address Read burst size.
     sc_in<sc_uint<PRAM_AXI_AxBURST>>     S_AXI_ARBURST;    // AXI address Read burst type.
-    sc_in<bool>     S_AXI_ARLOCK;                       // AXI Read address lock signal.
+    sc_in<sc_uint<1>>     S_AXI_ARLOCK;                       // AXI Read address lock signal.
     sc_in<sc_uint<PRAM_AXI_AxCACHE>>     S_AXI_ARCACHE;    // AXI Read address cache control signal.
     sc_in<sc_uint<PRAM_AXI_AxPROT>>     S_AXI_ARPROT;      // AXI Read address protection signal.
     sc_in<sc_uint<PRAM_AXI_AxREGION>>     S_AXI_ARREGION;  // Channel address region index.
@@ -98,7 +98,7 @@ public:
     sc_out<sc_uint<PRAM_AXI_AxLEN>>     M_AXI_AWLEN[PRAM_SLAVE_NUM];        // AXI address Write burst length.
     sc_out<sc_uint<PRAM_AXI_AxSIZE>>     M_AXI_AWSIZE[PRAM_SLAVE_NUM];      // AXI address Write burst size.
     sc_out<sc_uint<PRAM_AXI_AxBURST>>     M_AXI_AWBURST[PRAM_SLAVE_NUM];    // AXI address Write burst type.
-    sc_out<bool>     M_AXI_AWLOCK[PRAM_SLAVE_NUM];                       // AXI Write address lock signal.
+    sc_out<sc_uint<1>>     M_AXI_AWLOCK[PRAM_SLAVE_NUM];                       // AXI Write address lock signal.
     sc_out<sc_uint<PRAM_AXI_AxCACHE>>     M_AXI_AWCACHE[PRAM_SLAVE_NUM];    // AXI Write address cache control signal.
     sc_out<sc_uint<PRAM_AXI_AxPROT>>     M_AXI_AWPROT[PRAM_SLAVE_NUM];      // AXI Write address protection signal.
     sc_out<sc_uint<PRAM_AXI_AxREGION>>     M_AXI_AWREGION[PRAM_SLAVE_NUM];  // Channel address region index
@@ -126,7 +126,7 @@ public:
     sc_out<sc_uint<PRAM_AXI_AxLEN>>     M_AXI_ARLEN[PRAM_SLAVE_NUM];        // AXI address Read burst length.
     sc_out<sc_uint<PRAM_AXI_AxSIZE>>     M_AXI_ARSIZE[PRAM_SLAVE_NUM];      // AXI address Read burst size.
     sc_out<sc_uint<PRAM_AXI_AxBURST>>     M_AXI_ARBURST[PRAM_SLAVE_NUM];    // AXI address Read burst type.
-    sc_out<bool>     M_AXI_ARLOCK[PRAM_SLAVE_NUM];                       // AXI Read address lock signal.
+    sc_out<sc_uint<1>>     M_AXI_ARLOCK[PRAM_SLAVE_NUM];                       // AXI Read address lock signal.
     sc_out<sc_uint<PRAM_AXI_AxCACHE>>     M_AXI_ARCACHE[PRAM_SLAVE_NUM];    // AXI Read address cache control signal.
     sc_out<sc_uint<PRAM_AXI_AxPROT>>     M_AXI_ARPROT[PRAM_SLAVE_NUM];      // AXI Read address protection signal.
     sc_out<sc_uint<PRAM_AXI_AxREGION>>     M_AXI_ARREGION[PRAM_SLAVE_NUM];  // Channel address region index.
@@ -144,4 +144,4 @@ public:
     sc_out<bool>     M_AXI_RREADY;                       // AXI Read ready.
 };
 
-#endif //_x2x_decoder_H
+#endif //_X2x_decoder_H

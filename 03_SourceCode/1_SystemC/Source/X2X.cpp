@@ -9,18 +9,18 @@
  */
 x2x::x2x(sc_module_name name) : sc_module(name)
 {
-  x2x_buffer *x2x_buffer[PRAM_MASTER_NUM];   // = {x2x_buffer("x2x_buffer")};
-  X2X_DECODER *x2x_decoder[PRAM_MASTER_NUM]; //= {X2X_DECODER("x2x_decoder")};
-  X2X_ARBITER *x2x_arbier[PRAM_SLAVE_NUM];   // = {X2X_ARBITER("x2x_arbier")};
+  // x2x_buffer *x2x_buffer[PRAM_MASTER_NUM];   // = {x2x_buffer("x2x_buffer")};
+  // X2X_DECODER *x2x_decoder[PRAM_MASTER_NUM]; //= {X2X_DECODER("x2x_decoder")};
+  // X2X_ARBITER *x2x_arbiter[PRAM_SLAVE_NUM];   // = {X2X_ARBITER("x2x_arbiter")};
 
   for (size_t i = 0; i < PRAM_MASTER_NUM; i++)
   {
-    x2x_buffer[i] = new x2x_buffer("x2x_buffer");
-    x2x_decoder[i] = new X2X_DECODER("x2x_decoder");
+    x2x_buffer[i] = new X2x_buffer("x2x_buffer");
+    x2x_decoder[i] = new X2x_decoder("x2x_decoder");
   }
   for (size_t i = 0; i < PRAM_SLAVE_NUM; i++)
   {
-    x2x_arbier[i] = new X2X_ARBITER("x2x_arbier");
+    x2x_arbiter[i] = new X2x_arbiter("x2x_arbiter");
   }
 
   // Process registration
@@ -42,9 +42,9 @@ x2x::x2x(sc_module_name name) : sc_module(name)
   for (unsigned int index = 0; index < PRAM_MASTER_NUM; index++)
   {
     ACLK(x2x_buffer[index]->ACLK);
-    ACLK(x2x_arbier[index]->ACLK);
+    ACLK(x2x_arbiter[index]->ACLK);
     ARESETN(x2x_buffer[index]->ARESETN);
-    ARESETN(x2x_arbier[index]->ARESETN);
+    ARESETN(x2x_arbiter[index]->ARESETN);
   }
 
   // ***********************x2x_buffer to input port***********************
@@ -262,19 +262,19 @@ x2x::x2x(sc_module_name name) : sc_module(name)
   {
     for (unsigned int index_master = 0; index_master < PRAM_MASTER_NUM; index_master++)
     {
-      x2x_arbier[index_slave]->S_AXI_AWID[index_master](x2x_decoder[index_master]->M_AXI_AWID[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_AWADDR[index_master](x2x_decoder[index_master]->M_AXI_AWADDR[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_AWLEN[index_master](x2x_decoder[index_master]->M_AXI_AWLEN[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_AWSIZE[index_master](x2x_decoder[index_master]->M_AXI_AWSIZE[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_AWBURST[index_master](x2x_decoder[index_master]->M_AXI_AWBURST[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_AWCACHE[index_master](x2x_decoder[index_master]->M_AXI_AWCACHE[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_AWPROT[index_master](x2x_decoder[index_master]->M_AXI_AWPROT[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_AWREGION[index_master](x2x_decoder[index_master]->M_AXI_AWREGION[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_AWQOS[index_master](x2x_decoder[index_master]->M_AXI_AWQOS[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_AWUSER[index_master](x2x_decoder[index_master]->M_AXI_AWUSER[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_AWLOCK[index_master](x2x_decoder[index_master]->M_AXI_AWLOCK[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_AWVALID[index_master](x2x_decoder[index_master]->M_AXI_AWVALID[index_slave]);
-      x2x_decoder[index_master]->M_AXI_AWREADY[index_master](x2x_arbier[index_slave]->S_AXI_AWREADY[index_master]);
+      x2x_arbiter[index_slave]->S_AXI_AWID[index_master](x2x_decoder[index_master]->M_AXI_AWID[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_AWADDR[index_master](x2x_decoder[index_master]->M_AXI_AWADDR[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_AWLEN[index_master](x2x_decoder[index_master]->M_AXI_AWLEN[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_AWSIZE[index_master](x2x_decoder[index_master]->M_AXI_AWSIZE[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_AWBURST[index_master](x2x_decoder[index_master]->M_AXI_AWBURST[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_AWCACHE[index_master](x2x_decoder[index_master]->M_AXI_AWCACHE[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_AWPROT[index_master](x2x_decoder[index_master]->M_AXI_AWPROT[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_AWREGION[index_master](x2x_decoder[index_master]->M_AXI_AWREGION[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_AWQOS[index_master](x2x_decoder[index_master]->M_AXI_AWQOS[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_AWUSER[index_master](x2x_decoder[index_master]->M_AXI_AWUSER[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_AWLOCK[index_master](x2x_decoder[index_master]->M_AXI_AWLOCK[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_AWVALID[index_master](x2x_decoder[index_master]->M_AXI_AWVALID[index_slave]);
+      x2x_decoder[index_master]->M_AXI_AWREADY[index_master](x2x_arbiter[index_slave]->S_AXI_AWREADY[index_master]);
     }
   }
   // W
@@ -282,13 +282,13 @@ x2x::x2x(sc_module_name name) : sc_module(name)
   {
     for (unsigned int index_master = 0; index_master < PRAM_MASTER_NUM; index_master++)
     {
-      x2x_arbier[index_slave]->S_AXI_WID[index_master](x2x_decoder[index_master]->M_AXI_WID[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_WDATA[index_master](x2x_decoder[index_master]->M_AXI_WDATA[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_WSTRB[index_master](x2x_decoder[index_master]->M_AXI_WSTRB[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_WUSER[index_master](x2x_decoder[index_master]->M_AXI_WUSER[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_WLAST[index_master](x2x_decoder[index_master]->M_AXI_WLAST[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_WVALID[index_master](x2x_decoder[index_master]->M_AXI_WVALID[index_slave]);
-      x2x_decoder[index_master]->M_AXI_WREADY[index_master](x2x_arbier[index_slave]->S_AXI_WREADY[index_master]);
+      x2x_arbiter[index_slave]->S_AXI_WID[index_master](x2x_decoder[index_master]->M_AXI_WID[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_WDATA[index_master](x2x_decoder[index_master]->M_AXI_WDATA[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_WSTRB[index_master](x2x_decoder[index_master]->M_AXI_WSTRB[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_WUSER[index_master](x2x_decoder[index_master]->M_AXI_WUSER[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_WLAST[index_master](x2x_decoder[index_master]->M_AXI_WLAST[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_WVALID[index_master](x2x_decoder[index_master]->M_AXI_WVALID[index_slave]);
+      x2x_decoder[index_master]->M_AXI_WREADY[index_master](x2x_arbiter[index_slave]->S_AXI_WREADY[index_master]);
     }
   }
   // B
@@ -296,11 +296,11 @@ x2x::x2x(sc_module_name name) : sc_module(name)
   {
     for (unsigned int index_master = 0; index_master < PRAM_MASTER_NUM; index_master++)
     {
-      x2x_decoder[index_master]->M_AXI_BID(x2x_arbier[index_slave]->S_AXI_BID);
-      x2x_decoder[index_master]->M_AXI_BRESP(x2x_arbier[index_slave]->S_AXI_BRESP);
-      x2x_arbier[index_slave]->S_AXI_BREADY(x2x_decoder[index_master]->M_AXI_BREADY);
-      x2x_decoder[index_master]->M_AXI_BUSER(x2x_arbier[index_slave]->S_AXI_BUSER);
-      x2x_decoder[index_master]->M_AXI_BVALID(x2x_arbier[index_slave]->S_AXI_BVALID);
+      x2x_decoder[index_master]->M_AXI_BID(x2x_arbiter[index_slave]->S_AXI_BID);
+      x2x_decoder[index_master]->M_AXI_BRESP(x2x_arbiter[index_slave]->S_AXI_BRESP);
+      x2x_arbiter[index_slave]->S_AXI_BREADY(x2x_decoder[index_master]->M_AXI_BREADY);
+      x2x_decoder[index_master]->M_AXI_BUSER(x2x_arbiter[index_slave]->S_AXI_BUSER);
+      x2x_decoder[index_master]->M_AXI_BVALID(x2x_arbiter[index_slave]->S_AXI_BVALID);
     }
   }
   // AR
@@ -308,19 +308,19 @@ x2x::x2x(sc_module_name name) : sc_module(name)
   {
     for (unsigned int index_master = 0; index_master < PRAM_MASTER_NUM; index_master++)
     {
-      x2x_arbier[index_slave]->S_AXI_ARID[index_master](x2x_decoder[index_master]->M_AXI_ARID[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_ARADDR[index_master](x2x_decoder[index_master]->M_AXI_ARADDR[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_ARLEN[index_master](x2x_decoder[index_master]->M_AXI_ARLEN[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_ARSIZE[index_master](x2x_decoder[index_master]->M_AXI_ARSIZE[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_ARBURST[index_master](x2x_decoder[index_master]->M_AXI_ARBURST[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_ARCACHE[index_master](x2x_decoder[index_master]->M_AXI_ARCACHE[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_ARPROT[index_master](x2x_decoder[index_master]->M_AXI_ARPROT[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_ARREGION[index_master](x2x_decoder[index_master]->M_AXI_ARREGION[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_ARQOS[index_master](x2x_decoder[index_master]->M_AXI_ARQOS[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_ARUSER[index_master](x2x_decoder[index_master]->M_AXI_ARUSER[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_ARLOCK[index_master](x2x_decoder[index_master]->M_AXI_AWLOCK[index_slave]);
-      x2x_arbier[index_slave]->S_AXI_ARVALID[index_master](x2x_decoder[index_master]->M_AXI_ARVALID[index_slave]);
-      x2x_decoder[index_master]->M_AXI_ARREADY[index_master](x2x_arbier[index_slave]->S_AXI_AWREADY[index_master]);
+      x2x_arbiter[index_slave]->S_AXI_ARID[index_master](x2x_decoder[index_master]->M_AXI_ARID[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_ARADDR[index_master](x2x_decoder[index_master]->M_AXI_ARADDR[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_ARLEN[index_master](x2x_decoder[index_master]->M_AXI_ARLEN[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_ARSIZE[index_master](x2x_decoder[index_master]->M_AXI_ARSIZE[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_ARBURST[index_master](x2x_decoder[index_master]->M_AXI_ARBURST[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_ARCACHE[index_master](x2x_decoder[index_master]->M_AXI_ARCACHE[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_ARPROT[index_master](x2x_decoder[index_master]->M_AXI_ARPROT[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_ARREGION[index_master](x2x_decoder[index_master]->M_AXI_ARREGION[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_ARQOS[index_master](x2x_decoder[index_master]->M_AXI_ARQOS[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_ARUSER[index_master](x2x_decoder[index_master]->M_AXI_ARUSER[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_ARLOCK[index_master](x2x_decoder[index_master]->M_AXI_AWLOCK[index_slave]);
+      x2x_arbiter[index_slave]->S_AXI_ARVALID[index_master](x2x_decoder[index_master]->M_AXI_ARVALID[index_slave]);
+      x2x_decoder[index_master]->M_AXI_ARREADY[index_master](x2x_arbiter[index_slave]->S_AXI_AWREADY[index_master]);
     }
   }
   // R
@@ -328,13 +328,13 @@ x2x::x2x(sc_module_name name) : sc_module(name)
   {
     for (unsigned int index_master = 0; index_master < PRAM_MASTER_NUM; index_master++)
     {
-      x2x_decoder[index_master]->M_AXI_RID(x2x_arbier[index_slave]->S_AXI_RID);
-      x2x_decoder[index_master]->M_AXI_RRESP(x2x_arbier[index_slave]->S_AXI_RRESP);
-      x2x_decoder[index_master]->M_AXI_RDATA(x2x_arbier[index_slave]->S_AXI_RDATA);
-      x2x_decoder[index_master]->M_AXI_RUSER(x2x_arbier[index_slave]->S_AXI_RUSER);
-      x2x_arbier[index_slave]->S_AXI_RREADY(x2x_decoder[index_master]->M_AXI_RREADY);
-      x2x_decoder[index_master]->M_AXI_RLAST(x2x_arbier[index_slave]->S_AXI_RLAST);
-      x2x_decoder[index_master]->M_AXI_RVALID(x2x_arbier[index_slave]->S_AXI_RVALID);
+      x2x_decoder[index_master]->M_AXI_RID(x2x_arbiter[index_slave]->S_AXI_RID);
+      x2x_decoder[index_master]->M_AXI_RRESP(x2x_arbiter[index_slave]->S_AXI_RRESP);
+      x2x_decoder[index_master]->M_AXI_RDATA(x2x_arbiter[index_slave]->S_AXI_RDATA);
+      x2x_decoder[index_master]->M_AXI_RUSER(x2x_arbiter[index_slave]->S_AXI_RUSER);
+      x2x_arbiter[index_slave]->S_AXI_RREADY(x2x_decoder[index_master]->M_AXI_RREADY);
+      x2x_decoder[index_master]->M_AXI_RLAST(x2x_arbiter[index_slave]->S_AXI_RLAST);
+      x2x_decoder[index_master]->M_AXI_RVALID(x2x_arbiter[index_slave]->S_AXI_RVALID);
     }
   }
   // *************************x2x_arbiter to output port*************************
@@ -342,55 +342,55 @@ x2x::x2x(sc_module_name name) : sc_module(name)
 
   for (unsigned int index = 0; index < PRAM_SLAVE_NUM; index++)
   {
-    x2x_arbier[index]->M_AXI_AWID(SIG_ARBITER_X2X_AXI_AWID[index]);
-    x2x_arbier[index]->M_AXI_AWADDR(SIG_ARBITER_X2X_AXI_AWADDR[index]);
-    x2x_arbier[index]->M_AXI_AWLEN(SIG_ARBITER_X2X_AXI_AWLEN[index]);
-    x2x_arbier[index]->M_AXI_AWSIZE(SIG_ARBITER_X2X_AXI_AWSIZE[index]);
-    x2x_arbier[index]->M_AXI_AWBURST(SIG_ARBITER_X2X_AXI_AWBURST[index]);
-    x2x_arbier[index]->M_AXI_AWCACHE(SIG_ARBITER_X2X_AXI_AWCACHE[index]);
-    x2x_arbier[index]->M_AXI_AWPROT(SIG_ARBITER_X2X_AXI_AWPROT[index]);
-    x2x_arbier[index]->M_AXI_AWREGION(SIG_ARBITER_X2X_AXI_AWREGION[index]);
-    x2x_arbier[index]->M_AXI_AWQOS(SIG_ARBITER_X2X_AXI_AWQOS[index]);
-    x2x_arbier[index]->M_AXI_AWUSER(SIG_ARBITER_X2X_AXI_AWUSER[index]);
-    x2x_arbier[index]->M_AXI_AWLOCK(SIG_ARBITER_X2X_AXI_AWLOCK[index]);
-    x2x_arbier[index]->M_AXI_AWVALID(SIG_ARBITER_X2X_AXI_AWVALID[index]);
-    x2x_arbier[index]->M_AXI_AWREADY(SIG_ARBITER_X2X_AXI_AWREADY[index]);
+    x2x_arbiter[index]->M_AXI_AWID(SIG_ARBITER_X2X_AXI_AWID[index]);
+    x2x_arbiter[index]->M_AXI_AWADDR(SIG_ARBITER_X2X_AXI_AWADDR[index]);
+    x2x_arbiter[index]->M_AXI_AWLEN(SIG_ARBITER_X2X_AXI_AWLEN[index]);
+    x2x_arbiter[index]->M_AXI_AWSIZE(SIG_ARBITER_X2X_AXI_AWSIZE[index]);
+    x2x_arbiter[index]->M_AXI_AWBURST(SIG_ARBITER_X2X_AXI_AWBURST[index]);
+    x2x_arbiter[index]->M_AXI_AWCACHE(SIG_ARBITER_X2X_AXI_AWCACHE[index]);
+    x2x_arbiter[index]->M_AXI_AWPROT(SIG_ARBITER_X2X_AXI_AWPROT[index]);
+    x2x_arbiter[index]->M_AXI_AWREGION(SIG_ARBITER_X2X_AXI_AWREGION[index]);
+    x2x_arbiter[index]->M_AXI_AWQOS(SIG_ARBITER_X2X_AXI_AWQOS[index]);
+    x2x_arbiter[index]->M_AXI_AWUSER(SIG_ARBITER_X2X_AXI_AWUSER[index]);
+    x2x_arbiter[index]->M_AXI_AWLOCK(SIG_ARBITER_X2X_AXI_AWLOCK[index]);
+    x2x_arbiter[index]->M_AXI_AWVALID(SIG_ARBITER_X2X_AXI_AWVALID[index]);
+    x2x_arbiter[index]->M_AXI_AWREADY(SIG_ARBITER_X2X_AXI_AWREADY[index]);
     // W
-    x2x_arbier[index]->M_AXI_WID(SIG_ARBITER_X2X_AXI_WID[index]);
-    x2x_arbier[index]->M_AXI_WDATA(SIG_ARBITER_X2X_AXI_WDATA[index]);
-    x2x_arbier[index]->M_AXI_WSTRB(SIG_ARBITER_X2X_AXI_WSTRB[index]);
-    x2x_arbier[index]->M_AXI_WUSER(SIG_ARBITER_X2X_AXI_WUSER[index]);
-    x2x_arbier[index]->M_AXI_WLAST(SIG_ARBITER_X2X_AXI_WLAST[index]);
-    x2x_arbier[index]->M_AXI_WVALID(SIG_ARBITER_X2X_AXI_WVALID[index]);
-    x2x_arbier[index]->M_AXI_WREADY(SIG_ARBITER_X2X_AXI_WREADY[index]);
+    x2x_arbiter[index]->M_AXI_WID(SIG_ARBITER_X2X_AXI_WID[index]);
+    x2x_arbiter[index]->M_AXI_WDATA(SIG_ARBITER_X2X_AXI_WDATA[index]);
+    x2x_arbiter[index]->M_AXI_WSTRB(SIG_ARBITER_X2X_AXI_WSTRB[index]);
+    x2x_arbiter[index]->M_AXI_WUSER(SIG_ARBITER_X2X_AXI_WUSER[index]);
+    x2x_arbiter[index]->M_AXI_WLAST(SIG_ARBITER_X2X_AXI_WLAST[index]);
+    x2x_arbiter[index]->M_AXI_WVALID(SIG_ARBITER_X2X_AXI_WVALID[index]);
+    x2x_arbiter[index]->M_AXI_WREADY(SIG_ARBITER_X2X_AXI_WREADY[index]);
     // B
-    x2x_arbier[index]->M_AXI_BID(SIG_ARBITER_X2X_AXI_BID[index]);
-    x2x_arbier[index]->M_AXI_BRESP(SIG_ARBITER_X2X_AXI_BRESP[index]);
-    x2x_arbier[index]->M_AXI_BUSER(SIG_ARBITER_X2X_AXI_BUSER[index]);
-    x2x_arbier[index]->M_AXI_BVALID(SIG_ARBITER_X2X_AXI_BVALID[index]);
-    x2x_arbier[index]->M_AXI_BREADY(SIG_ARBITER_X2X_AXI_BREADY[index]);
+    x2x_arbiter[index]->M_AXI_BID(SIG_ARBITER_X2X_AXI_BID[index]);
+    x2x_arbiter[index]->M_AXI_BRESP(SIG_ARBITER_X2X_AXI_BRESP[index]);
+    x2x_arbiter[index]->M_AXI_BUSER(SIG_ARBITER_X2X_AXI_BUSER[index]);
+    x2x_arbiter[index]->M_AXI_BVALID(SIG_ARBITER_X2X_AXI_BVALID[index]);
+    x2x_arbiter[index]->M_AXI_BREADY(SIG_ARBITER_X2X_AXI_BREADY[index]);
     // AW
-    x2x_arbier[index]->M_AXI_ARID(SIG_ARBITER_X2X_AXI_ARID[index]);
-    x2x_arbier[index]->M_AXI_ARADDR(SIG_ARBITER_X2X_AXI_ARADDR[index]);
-    x2x_arbier[index]->M_AXI_ARLEN(SIG_ARBITER_X2X_AXI_ARLEN[index]);
-    x2x_arbier[index]->M_AXI_ARSIZE(SIG_ARBITER_X2X_AXI_ARSIZE[index]);
-    x2x_arbier[index]->M_AXI_ARBURST(SIG_ARBITER_X2X_AXI_ARBURST[index]);
-    x2x_arbier[index]->M_AXI_ARCACHE(SIG_ARBITER_X2X_AXI_ARCACHE[index]);
-    x2x_arbier[index]->M_AXI_ARPROT(SIG_ARBITER_X2X_AXI_ARPROT[index]);
-    x2x_arbier[index]->M_AXI_ARREGION(SIG_ARBITER_X2X_AXI_ARREGION[index]);
-    x2x_arbier[index]->M_AXI_ARQOS(SIG_ARBITER_X2X_AXI_ARQOS[index]);
-    x2x_arbier[index]->M_AXI_ARUSER(SIG_ARBITER_X2X_AXI_ARUSER[index]);
-    x2x_arbier[index]->M_AXI_ARLOCK(SIG_ARBITER_X2X_AXI_ARLOCK[index]);
-    x2x_arbier[index]->M_AXI_ARVALID(SIG_ARBITER_X2X_AXI_ARVALID[index]);
-    x2x_arbier[index]->M_AXI_ARREADY(SIG_ARBITER_X2X_AXI_ARREADY[index]);
+    x2x_arbiter[index]->M_AXI_ARID(SIG_ARBITER_X2X_AXI_ARID[index]);
+    x2x_arbiter[index]->M_AXI_ARADDR(SIG_ARBITER_X2X_AXI_ARADDR[index]);
+    x2x_arbiter[index]->M_AXI_ARLEN(SIG_ARBITER_X2X_AXI_ARLEN[index]);
+    x2x_arbiter[index]->M_AXI_ARSIZE(SIG_ARBITER_X2X_AXI_ARSIZE[index]);
+    x2x_arbiter[index]->M_AXI_ARBURST(SIG_ARBITER_X2X_AXI_ARBURST[index]);
+    x2x_arbiter[index]->M_AXI_ARCACHE(SIG_ARBITER_X2X_AXI_ARCACHE[index]);
+    x2x_arbiter[index]->M_AXI_ARPROT(SIG_ARBITER_X2X_AXI_ARPROT[index]);
+    x2x_arbiter[index]->M_AXI_ARREGION(SIG_ARBITER_X2X_AXI_ARREGION[index]);
+    x2x_arbiter[index]->M_AXI_ARQOS(SIG_ARBITER_X2X_AXI_ARQOS[index]);
+    x2x_arbiter[index]->M_AXI_ARUSER(SIG_ARBITER_X2X_AXI_ARUSER[index]);
+    x2x_arbiter[index]->M_AXI_ARLOCK(SIG_ARBITER_X2X_AXI_ARLOCK[index]);
+    x2x_arbiter[index]->M_AXI_ARVALID(SIG_ARBITER_X2X_AXI_ARVALID[index]);
+    x2x_arbiter[index]->M_AXI_ARREADY(SIG_ARBITER_X2X_AXI_ARREADY[index]);
     // R
-    x2x_arbier[index]->M_AXI_RID(SIG_ARBITER_X2X_AXI_RID[index]);
-    x2x_arbier[index]->M_AXI_RDATA(SIG_ARBITER_X2X_AXI_RDATA[index]);
-    x2x_arbier[index]->M_AXI_RRESP(SIG_ARBITER_X2X_AXI_RRESP[index]);
-    x2x_arbier[index]->M_AXI_RUSER(SIG_ARBITER_X2X_AXI_RUSER[index]);
-    x2x_arbier[index]->M_AXI_RLAST(SIG_ARBITER_X2X_AXI_RLAST[index]);
-    x2x_arbier[index]->M_AXI_RVALID(SIG_ARBITER_X2X_AXI_RVALID[index]);
-    x2x_arbier[index]->M_AXI_RREADY(SIG_ARBITER_X2X_AXI_RREADY[index]);
+    x2x_arbiter[index]->M_AXI_RID(SIG_ARBITER_X2X_AXI_RID[index]);
+    x2x_arbiter[index]->M_AXI_RDATA(SIG_ARBITER_X2X_AXI_RDATA[index]);
+    x2x_arbiter[index]->M_AXI_RRESP(SIG_ARBITER_X2X_AXI_RRESP[index]);
+    x2x_arbiter[index]->M_AXI_RUSER(SIG_ARBITER_X2X_AXI_RUSER[index]);
+    x2x_arbiter[index]->M_AXI_RLAST(SIG_ARBITER_X2X_AXI_RLAST[index]);
+    x2x_arbiter[index]->M_AXI_RVALID(SIG_ARBITER_X2X_AXI_RVALID[index]);
+    x2x_arbiter[index]->M_AXI_RREADY(SIG_ARBITER_X2X_AXI_RREADY[index]);
     // *************************x2x to output port*************************
     // *************************x2x_arbiter to output port*************************
     // AW

@@ -2,12 +2,12 @@
  * X2X Decoder Implementation
  */
 
-#include "x2x_decoder.h"
+#include "X2x_decoder.h"
 
 /**
- * x2x_decoder constructor
+ * X2x_decoder constructor
  */
-x2x_decoder::x2x_decoder(sc_module_name name) : sc_module(name)
+X2x_decoder::X2x_decoder(sc_module_name name) : sc_module(name)
 {
   for (unsigned int index = 0; index < PRAM_SLAVE_NUM; index++)
   {
@@ -19,7 +19,7 @@ x2x_decoder::x2x_decoder(sc_module_name name) : sc_module(name)
   m_AXI_ARADDR = 0x0;
   m_AXI_AWADDR = 0x0;
   // Process registration
-  SC_HAS_PROCESS(x2x_decoder);
+  SC_HAS_PROCESS(X2x_decoder);
   SC_METHOD(InsertAWMasterIDMethod)
   sensitive << S_AXI_AWID;
   dont_initialize();
@@ -97,36 +97,36 @@ x2x_decoder::x2x_decoder(sc_module_name name) : sc_module(name)
   dont_initialize();
 }
 /**
- * x2x_decoder constructor
+ * X2x_decoder constructor
  */
-x2x_decoder::~x2x_decoder()
+X2x_decoder::~X2x_decoder()
 {
 }
 /**
  * InsertAWMasterIDMethod
  */
-void x2x_decoder::InsertAWMasterIDMethod()
+void X2x_decoder::InsertAWMasterIDMethod()
 {
   m_AXI_AWID.range(C_S_AXI_ID_WIDTH - 1, PRAM_BIT_INSERTID) = masterID;
 }
 /**
  * InsertWMasterIDMethod
  */
-void x2x_decoder::InsertWMasterIDMethod()
+void X2x_decoder::InsertWMasterIDMethod()
 {
   m_AXI_WID.range(C_S_AXI_ID_WIDTH - 1, PRAM_BIT_INSERTID) = masterID;
 }
 /**
  * InsertARMasterIDMethod
  */
-void x2x_decoder::InsertARMasterIDMethod()
+void X2x_decoder::InsertARMasterIDMethod()
 {
   m_AXI_ARID.range(C_S_AXI_ID_WIDTH - 1, PRAM_BIT_INSERTID) = masterID;
 }
 /**
  * JudgmentARAddressMethod
  */
-void x2x_decoder::JudgmentARAddressMethod()
+void X2x_decoder::JudgmentARAddressMethod()
 {
   m_AXI_ARADDR = S_AXI_ARADDR.read();
   for (unsigned int index = 0; index < PRAM_SLAVE_NUM; index++)
@@ -144,7 +144,7 @@ void x2x_decoder::JudgmentARAddressMethod()
 /**
  * JudgmentAWAddressMethod
  */
-void x2x_decoder::JudgmentAWAddressMethod()
+void X2x_decoder::JudgmentAWAddressMethod()
 {
   m_AXI_AWADDR = S_AXI_ARADDR.read();
   // get address
@@ -163,7 +163,7 @@ void x2x_decoder::JudgmentAWAddressMethod()
 /**
  * BChannelHandlerMethod
  */
-void x2x_decoder::BChannelHandlerMethod()
+void X2x_decoder::BChannelHandlerMethod()
 {
   bool isMasterID = false;
   if (M_AXI_BVALID.read() != 0)
@@ -190,7 +190,7 @@ void x2x_decoder::BChannelHandlerMethod()
 /**
  * RChannelHandlerMethod
  */
-void x2x_decoder::RChannelHandlerMethod()
+void X2x_decoder::RChannelHandlerMethod()
 {
   bool isMasterID = false;
   if (M_AXI_RVALID.read() != false)
@@ -217,7 +217,7 @@ void x2x_decoder::RChannelHandlerMethod()
 /**
  * AwPopOutMethod
  */
-void x2x_decoder::AwPopOutMethod()
+void X2x_decoder::AwPopOutMethod()
 {
   bool mAwPopOut = false;
   for (unsigned int index = 0; index < PRAM_SLAVE_NUM; index++)
@@ -230,7 +230,7 @@ void x2x_decoder::AwPopOutMethod()
 /**
  * WPopOutMethod
  */
-void x2x_decoder::WPopOutMethod()
+void X2x_decoder::WPopOutMethod()
 {
   bool mWPopOut = false;
   for (unsigned int index = 0; index < PRAM_SLAVE_NUM; index++)
@@ -243,7 +243,7 @@ void x2x_decoder::WPopOutMethod()
 /**
  * ArPopOutMethod
  */
-void x2x_decoder::ArPopOutMethod()
+void X2x_decoder::ArPopOutMethod()
 {
   bool mArPopOut = false;
   for (unsigned int index = 0; index < PRAM_SLAVE_NUM; index++)
@@ -256,7 +256,7 @@ void x2x_decoder::ArPopOutMethod()
 /**
  * AWSelectorMethod
  */
-void x2x_decoder::AWSelectorMethod()
+void X2x_decoder::AWSelectorMethod()
 {
   if (S_AXI_AWVALID.read() != false)
   { // valid
@@ -295,7 +295,7 @@ void x2x_decoder::AWSelectorMethod()
 /**
  * WSelectorMethod
  */
-void x2x_decoder::WSelectorMethod()
+void X2x_decoder::WSelectorMethod()
 {
   if (S_AXI_WVALID.read() != false)
   { // valid
@@ -327,7 +327,7 @@ void x2x_decoder::WSelectorMethod()
 /**
  * ARSelectorMethod
  */
-void x2x_decoder::ARSelectorMethod()
+void X2x_decoder::ARSelectorMethod()
 {
   if (S_AXI_ARVALID.read() != false)
   { // valid

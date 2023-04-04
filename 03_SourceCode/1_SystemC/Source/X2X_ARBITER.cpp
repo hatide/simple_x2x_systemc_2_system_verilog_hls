@@ -7,9 +7,9 @@
 /**
  * x2x_arbiter constructor
  */
-x2x_arbiter::x2x_arbiter(sc_module_name name) : sc_module(name)
+X2x_arbiter::X2x_arbiter(sc_module_name name) : sc_module(name)
 {
-  SC_HAS_PROCESS(x2x_arbiter);
+  SC_HAS_PROCESS(X2x_arbiter);
   // R channel
   M_AXI_RID.bind(S_AXI_RID);
   M_AXI_RDATA.bind(S_AXI_RDATA);
@@ -95,11 +95,11 @@ x2x_arbiter::x2x_arbiter(sc_module_name name) : sc_module(name)
 /**
  * x2x_arbiter constructor
  */
-x2x_arbiter::~x2x_arbiter()
+X2x_arbiter::~X2x_arbiter()
 {
 }
 
-void x2x_arbiter::AWRoundRobinMethod()
+void X2x_arbiter::AWRoundRobinMethod()
 {
   for (unsigned int index = 0; index < PRAM_MASTER_NUM; index++)
   {
@@ -128,7 +128,7 @@ void x2x_arbiter::AWRoundRobinMethod()
   }
 }
 
-void x2x_arbiter::AWHandShackSlaveMethod()
+void X2x_arbiter::AWHandShackSlaveMethod()
 {
   if (M_AXI_AWREADY.negedge())
   {
@@ -157,7 +157,7 @@ void x2x_arbiter::AWHandShackSlaveMethod()
   }
 }
 
-void x2x_arbiter::ArbiterCoreMethod()
+void X2x_arbiter::ArbiterCoreMethod()
 {
   if (ARESETN.negedge())
   {
@@ -258,7 +258,7 @@ void x2x_arbiter::ArbiterCoreMethod()
   }
 }
 
-void x2x_arbiter::ARRoundRobinMethod()
+void X2x_arbiter::ARRoundRobinMethod()
 {
   for (unsigned int index = 0; index < PRAM_MASTER_NUM; index++)
   {
@@ -287,7 +287,7 @@ void x2x_arbiter::ARRoundRobinMethod()
   }
 }
 
-void x2x_arbiter::ARHandShackSlaveMethod()
+void X2x_arbiter::ARHandShackSlaveMethod()
 {
   if (M_AXI_ARREADY.negedge())
   {
@@ -316,7 +316,7 @@ void x2x_arbiter::ARHandShackSlaveMethod()
   }
 }
 
-void x2x_arbiter::WRoundRobinMethod()
+void X2x_arbiter::WRoundRobinMethod()
 {
   for (unsigned int index = 0; index < PRAM_MASTER_NUM; index++)
   {
@@ -345,7 +345,7 @@ void x2x_arbiter::WRoundRobinMethod()
   }
 }
 
-void x2x_arbiter::WHandShackSlaveMethod()
+void X2x_arbiter::WHandShackSlaveMethod()
 {
   if (M_AXI_WREADY.negedge())
   {
